@@ -1,1 +1,42 @@
 
+
+apply plugin: 'scala'
+
+task "createDirs" << {
+     sourceSets*.scala.srcDirs*.each { it.mkdirs() }
+     sourceSets*.java.srcDirs*.each { it.mkdirs() }
+     sourceSets*.resources.srcDirs*.each { it.mkdirs() }
+ }
+ repositories {
+     mavenLocal()
+     maven { url 'http://maven.oschina.net/content/groups/public/' }
+     mavenCentral()
+ }
+ 
+ dependencies {
+     compile "org.scala-lang:scala-library:2.11.7"
+     compile "org.scala-lang:scala-compiler:2.11.7"
+     compile "org.scala-lang:scala-reflect:2.11.7"
+     
+ }
+ 
+ jar {
+    from {
+        configurations.compile.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+        configurations.runtime.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
+	manifest {
+         attributes 'Main-Class': 'test'
+     }
+}
+ uploadArchives {
+    repositories {
+       flatDir {
+           dirs 'C:\\workspace\\scalaGradletest\\target\\'
+       }
+    }
+}
